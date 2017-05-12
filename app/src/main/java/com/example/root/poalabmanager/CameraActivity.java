@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -17,9 +18,11 @@ import static android.R.attr.data;
 
 public class CameraActivity extends AppCompatActivity {
     private final int PIC_CAPTURED = 1;
-    private Bitmap m_bitmap;
+    /*private Bitmap m_bitmap;
     String m_curentDateandTime;
-    String m_imagePath = "PoaLabManager";
+    String m_imagePath =*/
+    String m_imageFolder = "/PoaLabManager";
+
     //String m_imagePath = Environment.getExternalStorageDirectory()+ File.separator + "PoaLabManager";
 
     @Override
@@ -40,11 +43,15 @@ public class CameraActivity extends AppCompatActivity {
         super.onActivityResult(requestCode,resultCode,data);
         if (requestCode == PIC_CAPTURED && resultCode == RESULT_OK)
         {
+            Bitmap img = (Bitmap) data.getExtras().get("data");
+            this.createDirectoryAndSaveImage(img,getImageName());
+
+            Toast.makeText(CameraActivity.this,"Foto Retirada",Toast.LENGTH_SHORT).show();
             /*m_bitmap = ImageHelper.scaleImage(m_imagePath, 200, 200);
             m_bitmap = ImageHelper.rotateImage(m_bitmap, true, m_rotate);
-            m_ivCaptureImage.setImageBitmap(m_bitmap);*/
+            m_ivCaptureImage.setImageBitmap(m_bitmap);
 
-            //Toast.makeText(CameraActivity.this,"Foto Retirada",Toast.LENGTH_SHORT).show();
+
             folderExists();
 
             Uri uriSavedImage= null;
@@ -57,11 +64,43 @@ public class CameraActivity extends AppCompatActivity {
 
             } catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 
-    private void folderExists(){
+    private void createDirectoryAndSaveImage(Bitmap img, String filename){
+
+        String filePath = Environment.getExternalStorageDirectory() + m_imageFolder;
+        File direct = new File(filePath);
+
+        if(!direct.exists()){
+            //File newDirect = new File("/sdcard/"+m_imageFolder);
+            File newDirect = new File(filePath);
+            newDirect.mkdirs();
+        }
+        //File file = new File(new File("/sdcard/"+m_imageFolder),filename);
+        File file = new File(new File(filePath),filename);
+
+        if(file.exists()){
+            file.delete();
+        }
+        try{
+            FileOutputStream out = new FileOutputStream(file);
+            img.compress(Bitmap.CompressFormat.PNG,100,out);
+            out.flush();
+            out.close();
+            //AndroidBmpUtil bmpUtil = new AndroidBmpUtil().save(img,file);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private String getImageName(){
+        SimpleDateFormat m_sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        return File.separator + m_sdf.format(new Date()) + ".png";
+    }
+
+    /*private void folderExists(){
         File folder = new File(m_imagePath);
         boolean success = true;
         if (!folder.exists()) {
@@ -88,5 +127,5 @@ public class CameraActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return m_imgUri;
-    }
+    }*/
 }
