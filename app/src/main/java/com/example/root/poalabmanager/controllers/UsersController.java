@@ -1,6 +1,9 @@
-package com.example.root.poalabmanager;
+package com.example.root.poalabmanager.controllers;
 
 import android.content.Context;
+
+import com.example.root.poalabmanager.dao.UsersDao;
+import com.example.root.poalabmanager.models.Users;
 
 import java.util.List;
 

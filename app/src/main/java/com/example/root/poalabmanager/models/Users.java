@@ -1,4 +1,4 @@
-package com.example.root.poalabmanager;
+package com.example.root.poalabmanager.models;
 
 /**
  * Created by minatto on 17/06/17.

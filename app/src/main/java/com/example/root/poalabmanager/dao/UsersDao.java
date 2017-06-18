@@ -1,8 +1,11 @@
-package com.example.root.poalabmanager;
+package com.example.root.poalabmanager.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+
+import com.example.root.poalabmanager.BDUtil;
+import com.example.root.poalabmanager.models.Users;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +14,7 @@ import java.util.List;
  * Created by minatto on 17/06/17.
  */
 
-public class UsersDao extends BDUtil{
+public class UsersDao extends BDUtil {
 
     private final String TABLE = "users";
 

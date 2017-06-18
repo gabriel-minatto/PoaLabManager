@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.root.poalabmanager.controllers.UsersController;
+import com.example.root.poalabmanager.models.Users;
 
 /**
  * A login screen that offers login via email/password.
@@ -77,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
             boolean isValid = usuarioController.validaLogin(login, senha);
             if (isValid) {
                 Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
+                intent.putExtra("user_name",login);
                 startActivity(intent);
             } else {
                 exibeDialogo("Verifique login e senha!");
