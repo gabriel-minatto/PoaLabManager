@@ -1,10 +1,12 @@
 package com.example.root.poalabmanager.models;
 
+import java.io.Serializable;
+
 /**
  * Created by minatto on 17/06/17.
  */
 
-public class Users{
+public class Users implements Serializable {
     private Integer id;
     private String login;
     private String senha;
@@ -46,5 +48,14 @@ public class Users{
 
     public void setSenha(String senha){
         this.senha = senha;
+    }
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", senha='" + senha + '\'' +
+                '}';
     }
 }

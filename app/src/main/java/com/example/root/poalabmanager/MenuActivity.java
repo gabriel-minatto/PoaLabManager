@@ -29,7 +29,7 @@ public class MenuActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        setTitle("Olá "+getIntent().getExtras().getString("user_name"));
+        //setTitle("Olá "+getIntent().getExtras().getString("user_name"));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

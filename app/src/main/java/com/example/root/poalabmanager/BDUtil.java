@@ -11,8 +11,18 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class BDUtil extends SQLiteOpenHelper {
 
     private static final String BASE_DE_DADOS = "POALABMANAGER.sqlite";
-    private static final int VERSAO = 1;
+    private static final int VERSAO = 2;
     protected SQLiteDatabase database;
+
+    //Tables
+    private String[] dbTables = {
+            "CREATE TABLE IF NOT EXISTS users (_ID INTEGER PRIMARY KEY AUTOINCREMENT, LOGIN TEXT NOT NULL UNIQUE, SENHA TEXT NOT NULL)", //usersTable
+            "CREATE TABLE IF NOT EXISTS projects (_ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT NOT NULL UNIQUE, USER INTEGER,FOREIGN KEY (USER) REFERENCES users(_ID))", //projectsTable
+            "CREATE TABLE IF NOT EXISTS comments (_ID INTEGER PRIMARY KEY AUTOINCREMENT, COMMENT TEXT NOT NULL, PROJECT INTEGER,FOREIGN KEY (PROJECT) REFERENCES projects(_ID))" //commentsTable
+    };
+    //private String usersTable = "CREATE TABLE users (_ID INTEGER PRIMARY KEY AUTOINCREMENT, LOGIN TEXT NOT NULL UNIQUE, SENHA TEXT NOT NULL)";
+    //private String projectsTable = "CREATE TABLE projects (_ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT NOT NULL UNIQUE, USER INTEGER,FOREIGN KEY (USER) REFERENCES users(_ID))";
+    //private String commentsTable = "CREATE TABLE comments (_ID INTEGER PRIMARY KEY AUTOINCREMENT, COMMENT TEXT NOT NULL, PROJECT INTEGER,FOREIGN KEY (PROJECT) REFERENCES projects(_ID))";
 
     public BDUtil(Context context) {
         super(context, BASE_DE_DADOS, null, VERSAO);
@@ -20,12 +30,17 @@ public class BDUtil extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        StringBuilder criarTabela = new StringBuilder();
-        criarTabela.append("CREATE TABLE users (");
-        criarTabela.append(" _ID   INTEGER PRIMARY KEY AUTOINCREMENT, ");
-        criarTabela.append(" LOGIN TEXT NOT NULL,");
-        criarTabela.append(" SENHA TEXT NOT NULL)");
-        db.execSQL(criarTabela.toString());
+        //StringBuilder criarTabela = new StringBuilder();
+        //criarTabela.append("CREATE TABLE users (");
+        //criarTabela.append(" _ID   INTEGER PRIMARY KEY AUTOINCREMENT, ");
+        //criarTabela.append(" LOGIN TEXT NOT NULL,");
+        //criarTabela.append(" SENHA TEXT NOT NULL)");
+        /*db.execSQL(this.usersTable);
+        db.execSQL(this.projectsTable);
+        db.execSQL(this.commentsTable);*/
+        for(int i = 0; i < this.dbTables.length; i++){
+            db.execSQL(this.dbTables[i]);
+        }
     }
 
     public SQLiteDatabase getDatabase() {
@@ -38,6 +53,11 @@ public class BDUtil extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        if(newVersion > oldVersion) {
+            for (int i = 0; i < this.dbTables.length; i++) {
+                db.execSQL(this.dbTables[i]);
+            }
+        }
     }
 
 

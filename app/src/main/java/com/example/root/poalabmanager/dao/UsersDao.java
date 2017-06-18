@@ -82,4 +82,12 @@ public class UsersDao extends BDUtil {
         cursor.moveToFirst();
         return montaUsuario(cursor);
     }
+
+    public Users findUserByLogin(String login){
+        String sql = "SELECT * FROM " + TABLE + " WHERE login = ?";
+        String[] selectionArgs = new String[] { login};
+        Cursor cursor = getDatabase().rawQuery(sql, selectionArgs);
+        cursor.moveToFirst();
+        return montaUsuario(cursor);
+    }
 }

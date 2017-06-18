@@ -12,6 +12,8 @@ import android.widget.EditText;
 import com.example.root.poalabmanager.controllers.UsersController;
 import com.example.root.poalabmanager.models.Users;
 
+import java.io.Serializable;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -78,8 +80,9 @@ public class LoginActivity extends AppCompatActivity {
         try {
             boolean isValid = usuarioController.validaLogin(login, senha);
             if (isValid) {
-                Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
-                intent.putExtra("user_name",login);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                Users user = usuarioController.findUserByLogin(login);
+                intent.putExtra("user",(Serializable) user);
                 startActivity(intent);
             } else {
                 exibeDialogo("Verifique login e senha!");
