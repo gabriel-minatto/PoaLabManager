@@ -22,4 +22,5 @@
     <string name="galeria_text">Galeria</string>
     <string name="add_desc">Adicionar Descrição</string>
     <string name="title_activity_main">Projetos</string>
+    <string name="deletar">Deletar</string>
 </resources>

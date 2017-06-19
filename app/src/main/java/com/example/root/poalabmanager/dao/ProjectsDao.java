@@ -33,11 +33,16 @@ public class ProjectsDao extends BDUtil {
         ContentValues values = new ContentValues();
         values.put("name", project.getName());
         values.put("user", project.getUser());
-        getDatabase().update(TABLE, values, "id = ?", new String[] { "" + project.getId() });
+        getDatabase().update(TABLE, values, "_ID = ?", new String[] { "" + project.getId() });
     }
 
     public void deleteAll() throws Exception {
         getDatabase().delete(TABLE, null, null);
+    }
+
+    public void deleteById(int id) throws  Exception{
+        ContentValues values = new ContentValues();
+        getDatabase().delete(TABLE,"_ID = ?",new String[] { "" + id });
     }
 
     public Projects findById(Integer id) {

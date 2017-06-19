@@ -44,6 +44,10 @@ public class ProjectsController{
         return projectDao.findByUser(user);
     }
 
+    public void deleteById(int id) throws Exception{
+        projectDao.deleteById(id);
+    }
+
     public void deleteAll() throws Exception {
         projectDao.deleteAll();
     }
