@@ -1,6 +1,7 @@
 package com.example.root.poalabmanager.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,11 +10,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.root.poalabmanager.MainActivity;
+import com.example.root.poalabmanager.MenuActivity;
 import com.example.root.poalabmanager.R;
 import com.example.root.poalabmanager.controllers.ProjectsController;
 import com.example.root.poalabmanager.interfaces.ClickRecycler;
 import com.example.root.poalabmanager.models.Projects;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -39,14 +42,25 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder viewHolder,final int position){
         final Projects project = projectsList.get(position);
-        viewHolder.viewNomeCidade.setText(project.getName());
+        viewHolder.viewName.setText(project.getName());
+
+        viewHolder.viewName.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                /*Intent intent = new Intent(((MainActivity)ProjectsAdapter.this.contexto), MenuActivity.class);
+                intent.putExtra("project",(Serializable) project);
+                ((MainActivity)ProjectsAdapter.this.contexto).startActivity(intent);*/
+                ((MainActivity)ProjectsAdapter.this.contexto).openProject(project);
+            }
+        });
+
         viewHolder.delete.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 if(ProjectsAdapter.this.contexto instanceof MainActivity){
                     try {
                         ((MainActivity)ProjectsAdapter.this.contexto).projectController.deleteById(project.getId());
-                        //https://stackoverflow.com/questions/12142255/call-activity-method-from-adapter
+                        //https://stackoverflow.com/questions/12142255/call-activity-method-from-adapter#answer-12142492
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -67,11 +81,11 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
         return projectsList.size();
     }
     protected class MyViewHolder extends RecyclerView.ViewHolder{
-        protected TextView viewNomeCidade;
+        protected TextView viewName;
         protected ImageButton delete;
         public MyViewHolder(final View itemView){
             super(itemView);
-            viewNomeCidade = (TextView) itemView.findViewById(R.id.project_name);
+            viewName = (TextView) itemView.findViewById(R.id.project_name);
             delete = (ImageButton) itemView.findViewById(R.id.delete_project_button);
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override

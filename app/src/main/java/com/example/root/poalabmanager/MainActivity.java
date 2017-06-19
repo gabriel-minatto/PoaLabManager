@@ -1,11 +1,10 @@
 package com.example.root.poalabmanager;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -48,13 +47,19 @@ public class MainActivity extends AppCompatActivity {
         this.loadToolbar();
         this.loadNewProjectFab();
 
-        this.loadProcetsListRecycler();
+        this.loadProjectsListRecycler();
 
         //setTitle("Olá "+getIntent().getExtras().getString("user_name"));
         //Users user = (Users) getIntent().getExtras().getSerializable("user");
     }
 
-    public void loadProcetsListRecycler(){
+    public void openProject(Projects project){
+        Intent intent = new Intent(this, MenuActivity.class);
+        intent.putExtra("project",(Serializable) project);
+        startActivity(intent);
+    }
+
+    public void loadProjectsListRecycler(){
         this.projectsRecycler = (RecyclerView) findViewById(R.id.recycler_view);
         this.projectsRecycler.setLayoutManager(new LinearLayoutManager(this));
 
