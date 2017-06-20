@@ -28,6 +28,10 @@ public class UsersController {
         return usuarioDao.findUserByLogin(login);
     }
 
+    public Users userExists(String login){
+        return usuarioDao.userExists(login);
+    }
+
     public boolean insert(Users user) throws Exception {
         if (user == null || user.getLogin().isEmpty() || user.getSenha().isEmpty()) {
             return false;

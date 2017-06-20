@@ -80,6 +80,15 @@
                 android:color="@color/new_user_button"
                 android:text="@string/action_new_user"
                 android:textStyle="bold" />
+            <Button
+                android:id="@+id/firebase_login_btn"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:color="@color/new_user_button"
+                android:text="@string/firebase_login"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>

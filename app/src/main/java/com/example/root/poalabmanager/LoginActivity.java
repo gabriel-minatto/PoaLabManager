@@ -3,14 +3,22 @@ package com.example.root.poalabmanager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.root.poalabmanager.controllers.UsersController;
 import com.example.root.poalabmanager.models.Users;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 
@@ -58,7 +66,19 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Button firebaseLogin = (Button)findViewById(R.id.firebase_login_btn);
+        firebaseLogin.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, FirebaseLoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
     }
+
+
 
     public void testaInicializacao() throws Exception {
         if (usuarioController.findAll().isEmpty()){

@@ -2,7 +2,7 @@
     <string name="app_name">PoaLabManager</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Login</string>
+    <string name="prompt_email">Login/Email</string>
     <string name="prompt_password">Senha</string>
     <string name="action_sign_in">Entrar</string>
     <string name="new_user_btn">Criar</string>
@@ -23,4 +23,5 @@
     <string name="add_desc">Adicionar Descrição</string>
     <string name="title_activity_main">Projetos</string>
     <string name="deletar">Deletar</string>
+    <string name="firebase_login">Entrar com FireBase</string>
 </resources>

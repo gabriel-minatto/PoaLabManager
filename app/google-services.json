@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "181109215052",
+    "firebase_url": "https://poalabmanager.firebaseio.com",
+    "project_id": "poalabmanager",
+    "storage_bucket": "poalabmanager.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:181109215052:android:6bd18062228ca939",
+        "android_client_info": {
+          "package_name": "com.example.root.poalabmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "181109215052-33feqle01q6bi2i55586qjohvfkn3aru.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.root.poalabmanager",
+            "certificate_hash": "d1b19b8a17d17505425d1f3e6e0f9fd3c1ec0ea8"
+          }
+        },
+        {
+          "client_id": "181109215052-okqajgacm2q332si83791sa78bj2kfvg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGAeKeVBS6z-BsyAklY_IV1JkBAog3g4I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "181109215052-okqajgacm2q332si83791sa78bj2kfvg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
