@@ -1,27 +1,48 @@
 package com.example.root.poalabmanager;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.root.poalabmanager.models.Projects;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static android.R.attr.data;
 
 public class CameraActivity extends AppCompatActivity {
     private final int PIC_CAPTURED = 1;
-    /*private Bitmap m_bitmap;
-    String m_curentDateandTime;
-    String m_imagePath =*/
-    String m_imageFolder = "/PoaLabManager";
+    private Projects project;
+    String filePath = Environment.getExternalStorageDirectory() + "/PoaLabManager";
+    FirebaseStorage firebase;
+    StorageReference storageRef;
+    StorageReference imageRef;
+    Bitmap pictureBitmap;
+    UploadTask upTask;
 
     //String m_imagePath = Environment.getExternalStorageDirectory()+ File.separator + "PoaLabManager";
 
@@ -30,12 +51,19 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        this.project = (Projects) getIntent().getExtras().getSerializable("project");
+
+        this.loadFirebaseStorages();
+
         // Handle the camera action
         Intent camera = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(camera,PIC_CAPTURED);
+    }
 
-        //camera.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
-
+    private void loadFirebaseStorages(){
+        this.firebase = FirebaseStorage.getInstance();
+        this.storageRef = firebase.getReferenceFromUrl("gs://poalabmanager.appspot.com/projetos/");
+        this.imageRef = storageRef.child(this.project.getName()+"/"+getImageName());
     }
 
     @Override
@@ -43,43 +71,53 @@ public class CameraActivity extends AppCompatActivity {
         super.onActivityResult(requestCode,resultCode,data);
         if (requestCode == PIC_CAPTURED && resultCode == RESULT_OK)
         {
-            Bitmap img = (Bitmap) data.getExtras().get("data");
-            this.createDirectoryAndSaveImage(img,getImageName());
+            this.pictureBitmap = (Bitmap) data.getExtras().get("data");
 
-            Toast.makeText(CameraActivity.this,"Foto Retirada",Toast.LENGTH_SHORT).show();
-            /*m_bitmap = ImageHelper.scaleImage(m_imagePath, 200, 200);
-            m_bitmap = ImageHelper.rotateImage(m_bitmap, true, m_rotate);
-            m_ivCaptureImage.setImageBitmap(m_bitmap);
-
-
-            folderExists();
-
-            Uri uriSavedImage= null;
-
-            try {
-                uriSavedImage = this.getImageUri();
-
-                String teste = uriSavedImage.getPath();
-                //Toast.makeText(CameraActivity.this,teste,Toast.LENGTH_SHORT).show();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
+            this.uploadImageToFirebase();
         }
     }
 
-    private void createDirectoryAndSaveImage(Bitmap img, String filename){
+    private byte[] getByteArrayFromImage(){
+        ByteArrayOutputStream imageOutStream = new ByteArrayOutputStream();
+        this.pictureBitmap.compress(Bitmap.CompressFormat.PNG,0,imageOutStream);
+        return imageOutStream.toByteArray();
+    }
 
-        String filePath = Environment.getExternalStorageDirectory() + m_imageFolder;
-        File direct = new File(filePath);
+    /*private byte[] getByteArrayFromImage(){
+        ByteBuffer byteBuffer = ByteBuffer.allocate(this.pictureBitmap.getByteCount());
+        this.pictureBitmap.copyPixelsToBuffer(byteBuffer);
+        return byteBuffer.array();
+    }*/
+
+    private void uploadImageToFirebase(){
+
+        this.upTask = this.imageRef.putBytes(this.getByteArrayFromImage());
+
+        upTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(CameraActivity.this,"Ocorreu um erro durante o envio",Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(CameraActivity.this,"Imagem enviada com sucesso",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @NonNull
+    private File createDirectoryAndSaveImage(Bitmap img, String filename){
+
+        File direct = new File(this.filePath);
 
         if(!direct.exists()){
             //File newDirect = new File("/sdcard/"+m_imageFolder);
-            File newDirect = new File(filePath);
+            File newDirect = new File(this.filePath);
             newDirect.mkdirs();
         }
         //File file = new File(new File("/sdcard/"+m_imageFolder),filename);
-        File file = new File(new File(filePath),filename);
+        File file = new File(new File(this.filePath),filename);
 
         if(file.exists()){
             file.delete();
@@ -93,39 +131,11 @@ public class CameraActivity extends AppCompatActivity {
         }catch(Exception e){
             e.printStackTrace();
         }
+        return file;
     }
 
     private String getImageName(){
         SimpleDateFormat m_sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        return File.separator + m_sdf.format(new Date()) + ".png";
+        return File.separator + m_sdf.format(new Date()) + ".PNG";
     }
-
-    /*private void folderExists(){
-        File folder = new File(m_imagePath);
-        boolean success = true;
-        if (!folder.exists()) {
-            success = folder.mkdirs();
-        }
-    }
-
-    private Uri getImageUri() throws Exception
-    {
-        Uri m_imgUri = null;
-        File m_file;
-        String nome;
-        try
-        {
-            SimpleDateFormat m_sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-            m_curentDateandTime = m_sdf.format(new Date());
-            nome = File.separator + m_curentDateandTime + ".jpg";
-            //m_file = new File(m_imagePath);
-            m_file = new File(Environment.getExternalStorageDirectory()+ File.separator + "PoaLabManager/",nome);
-            m_imgUri = Uri.fromFile(m_file);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return m_imgUri;
-    }*/
 }

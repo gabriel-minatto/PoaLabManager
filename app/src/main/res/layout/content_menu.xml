@@ -8,4 +8,13 @@
     tools:context="com.example.root.poalabmanager.MenuActivity"
     tools:showIn="@layout/app_bar_menu">
 
+    <ImageView
+        android:id="@+id/mostra_imagem_tirada"
+        android:layout_width="144dp"
+        android:layout_height="154dp"
+        app:srcCompat="?android:attr/windowBackground"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="120dp"
+        android:layout_marginLeft="120dp"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 </android.support.constraint.ConstraintLayout>

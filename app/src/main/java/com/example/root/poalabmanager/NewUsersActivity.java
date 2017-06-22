@@ -22,6 +22,7 @@ public class NewUsersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_users);
+        setTitle("Cadastro");
         context = this;
         try {
             usuarioController = UsersController.getInstance(context);
@@ -54,10 +55,11 @@ public class NewUsersActivity extends AppCompatActivity {
         try {
             boolean i = usuarioController.insert(usuario);
             if(i){
+                exibeDialogo("Usuário criado!");
                 super.onBackPressed();
             }
 
-            exibeDialogo("Algo deu errado!");
+
 
         } catch (Exception e) {
             exibeDialogo("Algo deu errado!");

@@ -1,12 +1,16 @@
 package com.example.root.poalabmanager;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,20 +20,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.example.root.poalabmanager.models.Projects;
 
 import java.io.File;
+import java.io.Serializable;
 
 public class MenuActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+
+    implements NavigationView.OnNavigationItemSelectedListener {
     private final int RESULT_LOAD_IMG = 2;
     private final int IMAGE_VIEW_ACTIVITY_REQUEST_CODE = 3;
+    private Projects project;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        //setTitle("Olá "+getIntent().getExtras().getString("user_name"));
+        this.project = (Projects)getIntent().getExtras().getSerializable("project");
+
+        setTitle(project.getName());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -38,8 +52,31 @@ public class MenuActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setTitle("Novo comentário");
+
+                // Set up the input
+                final EditText novo_projeto = new EditText(view.getContext());
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                novo_projeto.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(novo_projeto);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(MenuActivity.this,"test",Toast.LENGTH_SHORT);
+                    }
+                });
+                builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
             }
         });
 
@@ -94,23 +131,9 @@ public class MenuActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
 
             Intent camera = new Intent(this, CameraActivity.class);
+            camera.putExtra("project",(Serializable) this.project);
             startActivity(camera);
 
-            // Handle the camera action
-            //Intent camera = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            //startActivityForResult(camera,PIC_CAPTURED);
-
-            /*File folder = new File(Environment.getExternalStorageDirectory() + File.separator + "PoaLabManager");
-            boolean success = true;
-            if (!folder.exists()) {
-                success = folder.mkdirs();
-            }
-
-
-
-            Uri uriSavedImage=Uri.fromFile(new File(+"flashCropped.png"));
-
-            camera.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);*/
 
 
 

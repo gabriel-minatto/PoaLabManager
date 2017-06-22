@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
         this.loadNewProjectFab();
 
         this.loadProjectsListRecycler();
-
-        //setTitle("Olá "+getIntent().getExtras().getString("user_name"));
-        //Users user = (Users) getIntent().getExtras().getSerializable("user");
     }
 
     public void openProject(Projects project){

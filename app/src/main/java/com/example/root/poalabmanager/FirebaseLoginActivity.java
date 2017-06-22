@@ -32,6 +32,7 @@ public class FirebaseLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firebase_login);
+        setTitle("Logar com Firebase");
         loadFireBaseAuth();
         loadUsersController();
 
