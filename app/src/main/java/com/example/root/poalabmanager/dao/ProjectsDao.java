@@ -4,11 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.example.root.poalabmanager.BDUtil;
+import com.example.root.poalabmanager.utils.BDUtil;
 import com.example.root.poalabmanager.models.Projects;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by minatto on 18/06/17.
@@ -22,17 +25,26 @@ public class ProjectsDao extends BDUtil {
         super(context);
     }
 
-    public void insert(Projects project) throws Exception {
+    public Projects insert(Projects project) throws Exception {
+        long id;
+        int hash = geraHash(project);
         ContentValues values = new ContentValues();
         values.put("name", project.getName());
         values.put("user", project.getUser());
-        getDatabase().insert(TABLE, null, values);
+        values.put("hash", hash);
+        id = getDatabase().insert(TABLE, null, values);
+        if(id != -1){
+            project.setId((int)id);
+            project.setHash(hash);
+        }
+        return project;
     }
 
     public void update(Projects project) throws Exception {
         ContentValues values = new ContentValues();
         values.put("name", project.getName());
         values.put("user", project.getUser());
+        values.put("hash", project.getHash());
         getDatabase().update(TABLE, values, "_ID = ?", new String[] { "" + project.getId() });
     }
 
@@ -84,7 +96,13 @@ public class ProjectsDao extends BDUtil {
         Integer id = cursor.getInt(cursor.getColumnIndex("_ID"));
         String name = cursor.getString(cursor.getColumnIndex("NAME"));
         int user = cursor.getInt(cursor.getColumnIndex("USER"));
-        return new Projects(id, name, user);
+        int hash = cursor.getInt(cursor.getColumnIndex("HASH"));
+        return new Projects(id, name, user, hash);
+    }
+
+    public int geraHash(Projects project){
+        SimpleDateFormat m_sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        return Objects.hashCode(project.getName()+project.getUser()+m_sdf.format(new Date()));
     }
 
     /**

@@ -22,5 +22,5 @@
         android:background="?selectableItemBackground"
         android:contentDescription="@string/deletar"
         android:padding="16dp"
-        android:src="@android:drawable/ic_delete" />
+        android:src="@android:drawable/ic_dialog_dialer" />
 </RelativeLayout>

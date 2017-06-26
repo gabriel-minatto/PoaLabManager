@@ -31,7 +31,6 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
     public ProjectsAdapter(Context contexto,List<Projects> projectsList){
         this.contexto = contexto;
         this.projectsList = projectsList;
-        this.clickRecycler = clickRecycler;
     }
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup,int i){
@@ -43,34 +42,8 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
     public void onBindViewHolder(MyViewHolder viewHolder,final int position){
         final Projects project = projectsList.get(position);
         viewHolder.viewName.setText(project.getName());
-
-        viewHolder.viewName.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                /*Intent intent = new Intent(((MainActivity)ProjectsAdapter.this.contexto), MenuActivity.class);
-                intent.putExtra("project",(Serializable) project);
-                ((MainActivity)ProjectsAdapter.this.contexto).startActivity(intent);*/
-                ((MainActivity)ProjectsAdapter.this.contexto).openProject(project);
-            }
-        });
-
-        viewHolder.delete.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                if(ProjectsAdapter.this.contexto instanceof MainActivity){
-                    try {
-                        ((MainActivity)ProjectsAdapter.this.contexto).projectController.deleteById(project.getId());
-                        //https://stackoverflow.com/questions/12142255/call-activity-method-from-adapter#answer-12142492
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    removeItem(position);
-                }
-
-            }
-        });
     }
-    private void removeItem(int position){
+    public void removeItem(int position){
         projectsList.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, projectsList.size(
@@ -82,11 +55,9 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.MyView
     }
     protected class MyViewHolder extends RecyclerView.ViewHolder{
         protected TextView viewName;
-        protected ImageButton delete;
         public MyViewHolder(final View itemView){
             super(itemView);
             viewName = (TextView) itemView.findViewById(R.id.project_name);
-            delete = (ImageButton) itemView.findViewById(R.id.delete_project_button);
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v){

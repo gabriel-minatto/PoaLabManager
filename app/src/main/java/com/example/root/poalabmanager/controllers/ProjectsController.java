@@ -24,12 +24,12 @@ public class ProjectsController{
         return instance;
     }
 
-    public boolean insert(Projects project) throws Exception {
+    public Projects insert(Projects project) throws Exception {
         if (project == null || project.getName().isEmpty() || project.getUser() == 0) {
-            return false;
+            return null;
         }
-        projectDao.insert(project);
-        return true;
+
+        return projectDao.insert(project);
     }
 
     public void update(Projects project) throws Exception {

@@ -22,11 +22,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.root.poalabmanager.models.Projects;
+import com.example.root.poalabmanager.models.Users;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 
 public class MenuActivity extends AppCompatActivity
@@ -35,6 +38,7 @@ public class MenuActivity extends AppCompatActivity
     private final int RESULT_LOAD_IMG = 2;
     private final int IMAGE_VIEW_ACTIVITY_REQUEST_CODE = 3;
     private Projects project;
+    private String userLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +47,9 @@ public class MenuActivity extends AppCompatActivity
 
         this.project = (Projects)getIntent().getExtras().getSerializable("project");
 
-        setTitle(project.getName());
+        this.userLogin = getIntent().getExtras().getString("userLogin");
+
+        setTitle(this.project.getName());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -90,6 +96,7 @@ public class MenuActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -130,8 +137,10 @@ public class MenuActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
 
+            //this.uploadProgress.setVisibility(View.VISIBLE);
             Intent camera = new Intent(this, CameraActivity.class);
             camera.putExtra("project",(Serializable) this.project);
+            camera.putExtra("userLogin", this.userLogin);
             startActivity(camera);
 
 

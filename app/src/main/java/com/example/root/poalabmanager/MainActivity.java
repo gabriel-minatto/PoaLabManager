@@ -48,12 +48,48 @@ public class MainActivity extends AppCompatActivity {
         this.loadNewProjectFab();
 
         this.loadProjectsListRecycler();
+
+        this.projectsRecycler.addOnItemTouchListener(
+            new RecyclerItemClickListener(this.context, this.projectsRecycler ,new RecyclerItemClickListener.OnItemClickListener() {
+                @Override public void onItemClick(View view, int position) {
+                    try {
+                        MainActivity.this.openProject(projectsList.get(position));
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override public void onLongItemClick(View view, int position) {
+                        MainActivity.this.deleteProject(position);
+                }
+            })
+        );
+
     }
 
-    public void openProject(Projects project){
+    public void openProject(Projects project) throws Exception{
         Intent intent = new Intent(this, MenuActivity.class);
         intent.putExtra("project",(Serializable) project);
+        intent.putExtra("userLogin", this.user.getLogin());
         startActivity(intent);
+    }
+
+    public void deleteProject(final int position){
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage("Deseja excluir o projeto?")
+                .setCancelable(false)
+                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        try {
+                            MainActivity.this.projectController.deleteById(MainActivity.this.projectsList.get(position).getId());
+                            MainActivity.this.adapter.removeItem(position);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .setNegativeButton("Não", null)
+                .show();
     }
 
     public void loadProjectsListRecycler(){
@@ -87,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Projects project = new Projects(novo_projeto.getText().toString(), MainActivity.this.user.getId());
                         try {
-                            MainActivity.this.projectController.insert(project);
+                            project = MainActivity.this.projectController.insert(project);
                             MainActivity.this.projectsList.add(project);
                             MainActivity.this.adapter.notifyDataSetChanged();
                             showToastMessage("Projeto " + project.getName() + " inserido com sucesso");

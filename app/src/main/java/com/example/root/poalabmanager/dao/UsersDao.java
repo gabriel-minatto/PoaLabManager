@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.example.root.poalabmanager.BDUtil;
+import com.example.root.poalabmanager.utils.BDUtil;
 import com.example.root.poalabmanager.models.Users;
 
 import java.util.ArrayList;
