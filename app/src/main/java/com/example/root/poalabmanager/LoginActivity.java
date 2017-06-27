@@ -1,9 +1,12 @@
 package com.example.root.poalabmanager;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,9 +25,16 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.OnShowRationale;
+import permissions.dispatcher.PermissionRequest;
+import permissions.dispatcher.RuntimePermissions;
+
 /**
  * A login screen that offers login via email/password.
  */
+@RuntimePermissions
 public class LoginActivity extends AppCompatActivity {
 
     private EditText editLogin, editSenha;
@@ -37,6 +47,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setTitle("Login");
+
+        LoginActivityPermissionsDispatcher.checkPermissionsWithCheck(LoginActivity.this);
+
         context = this;
         try {
             usuarioController = UsersController.getInstance(context);
@@ -79,8 +92,6 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-
-
     public void testaInicializacao() throws Exception {
         if (usuarioController.findAll().isEmpty()){
             Users usuario = new Users(null, "admin", "admin");
@@ -114,13 +125,44 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_login, menu);
-        return true;
-    }*/
 
+    @NeedsPermission({Manifest.permission.CAMERA, Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    public void checkPermissions(){
+        Toast.makeText(this,"Testando permissões necessárias...",Toast.LENGTH_SHORT).show();
+    }
 
+    @OnShowRationale(Manifest.permission.CAMERA)
+    void showRationaleForCamera(PermissionRequest request) {
 
+        showRationaleDialog(request,"Câmera");
+    }
+
+    @OnShowRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    void showRationaleForStorage(PermissionRequest request) {
+
+        showRationaleDialog(request,"Memória");
+    }
+
+    @OnShowRationale(Manifest.permission.INTERNET)
+    void showRationaleForInternet(PermissionRequest request) {
+
+        showRationaleDialog(request,"Internet");
+    }
+
+    private void showRationaleDialog(final PermissionRequest request, String recurso) {
+        new AlertDialog.Builder(this)
+                .setMessage("Permitir acesso a "+recurso)
+                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        request.proceed();
+                    }
+                })
+                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        request.cancel();
+                    }
+                })
+                .show();
+    }
 }
 
