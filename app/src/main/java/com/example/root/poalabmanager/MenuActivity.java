@@ -25,12 +25,22 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.root.poalabmanager.models.Comments;
 import com.example.root.poalabmanager.models.Projects;
 import com.example.root.poalabmanager.models.Users;
+import com.example.root.poalabmanager.utils.SlugifyUtil;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 
 public class MenuActivity extends AppCompatActivity
 
@@ -39,6 +49,9 @@ public class MenuActivity extends AppCompatActivity
     private final int IMAGE_VIEW_ACTIVITY_REQUEST_CODE = 3;
     private Projects project;
     private String userLogin;
+
+    private DatabaseReference dbRef;
+    private DatabaseReference comentsRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +64,13 @@ public class MenuActivity extends AppCompatActivity
 
         setTitle(this.project.getName());
 
+        this.loadDbRefs();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton new_comment_fab = (FloatingActionButton) findViewById(R.id.new_comment_fab);
+        new_comment_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -64,16 +79,20 @@ public class MenuActivity extends AppCompatActivity
                 builder.setTitle("Novo comentário");
 
                 // Set up the input
-                final EditText novo_projeto = new EditText(view.getContext());
+                final EditText novo_coment = new EditText(view.getContext());
                 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                novo_projeto.setInputType(InputType.TYPE_CLASS_TEXT);
-                builder.setView(novo_projeto);
+                novo_coment.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(novo_coment);
 
                 // Set up the buttons
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(MenuActivity.this,"test",Toast.LENGTH_SHORT);
+                        Comments coment = new Comments(MenuActivity.this.project.getUser(),MenuActivity.this.project.getId());
+                        coment.setText(novo_coment.getText().toString());
+                        MenuActivity.this.updateChildRef();
+                        MenuActivity.this.comentsRef.setValue(coment);
+                        Toast.makeText(MenuActivity.this,"Enviado!",Toast.LENGTH_LONG).show();
                     }
                 });
                 builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -94,6 +113,21 @@ public class MenuActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    public void loadDbRefs(){
+        String projectFolder =  SlugifyUtil.makeSlug(this.userLogin)+"_"+this.project.getHash()+"/";
+        this.dbRef = FirebaseDatabase.getInstance().getReference("testes/coments/"+projectFolder);
+        this.updateChildRef();
+    }
+
+    public void updateChildRef(){
+        this.comentsRef = this.dbRef.child(getRandomComentName());
+    }
+
+    public String getRandomComentName(){
+        SimpleDateFormat m_sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        return File.separator + m_sdf.format(new Date());
     }
 
 
@@ -158,4 +192,21 @@ public class MenuActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    /*@Override
+    protected void onStart(){
+        super.onStart();
+        this.dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue(Comments.class) != null)
+                    Toast.makeText(MenuActivity.this,"Enviado!",Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(MenuActivity.this,"Algo deu errado!",Toast.LENGTH_LONG).show();
+            }
+        });
+    }*/
 }
