@@ -48,7 +48,7 @@ public class MenuActivity extends AppCompatActivity
     private final int RESULT_LOAD_IMG = 2;
     private final int IMAGE_VIEW_ACTIVITY_REQUEST_CODE = 3;
     private Projects project;
-    private String userLogin;
+    private Users user;
 
     private DatabaseReference dbRef;
     private DatabaseReference comentsRef;
@@ -60,7 +60,7 @@ public class MenuActivity extends AppCompatActivity
 
         this.project = (Projects)getIntent().getExtras().getSerializable("project");
 
-        this.userLogin = getIntent().getExtras().getString("userLogin");
+        this.user = (Users)getIntent().getExtras().getSerializable("user");
 
         setTitle(this.project.getName());
 
@@ -73,8 +73,6 @@ public class MenuActivity extends AppCompatActivity
         new_comment_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setTitle("Novo comentário");
 
@@ -116,7 +114,7 @@ public class MenuActivity extends AppCompatActivity
     }
 
     public void loadDbRefs(){
-        String projectFolder =  SlugifyUtil.makeSlug(this.userLogin)+"_"+this.project.getHash()+"/";
+        String projectFolder =  SlugifyUtil.makeSlug(this.user.getLogin())+"_"+this.project.getHash()+"/";
         this.dbRef = FirebaseDatabase.getInstance().getReference("testes/coments/"+projectFolder);
         this.updateChildRef();
     }
@@ -174,18 +172,20 @@ public class MenuActivity extends AppCompatActivity
             //this.uploadProgress.setVisibility(View.VISIBLE);
             Intent camera = new Intent(this, CameraActivity.class);
             camera.putExtra("project",(Serializable) this.project);
-            camera.putExtra("userLogin", this.userLogin);
+            camera.putExtra("userLogin", this.user.getLogin());
             startActivity(camera);
 
+        }
 
+        if (id == R.id.nav_user_desc){
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Informações do Usuário");
 
+            builder.setMessage("ID: "+this.user.getId()+"\n"+"Login: "+this.user.getLogin());
+            // Set up the buttons
+            builder.setPositiveButton("OK", null);
 
-        } else if (id == R.id.nav_gallery) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            startActivityForResult( intent, IMAGE_VIEW_ACTIVITY_REQUEST_CODE);
-
-        } else if (id == R.id.nav_desc) {
-
+            builder.show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -193,20 +193,4 @@ public class MenuActivity extends AppCompatActivity
         return true;
     }
 
-    /*@Override
-    protected void onStart(){
-        super.onStart();
-        this.dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue(Comments.class) != null)
-                    Toast.makeText(MenuActivity.this,"Enviado!",Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(MenuActivity.this,"Algo deu errado!",Toast.LENGTH_LONG).show();
-            }
-        });
-    }*/
 }

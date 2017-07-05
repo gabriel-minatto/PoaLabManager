@@ -20,7 +20,7 @@
     <string name="action_settings">Settings</string>
     <string name="camera_text">Câmera</string>
     <string name="galeria_text">Galeria</string>
-    <string name="add_desc">Adicionar Descrição</string>
+    <string name="user_desc">Descrição do Usuário</string>
     <string name="title_activity_main">Projetos</string>
     <string name="deletar">Deletar</string>
     <string name="firebase_login">Entrar com FireBase</string>

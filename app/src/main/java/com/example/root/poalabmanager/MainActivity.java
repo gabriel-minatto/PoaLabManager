@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     public void openProject(Projects project) throws Exception{
         Intent intent = new Intent(this, MenuActivity.class);
         intent.putExtra("project",(Serializable) project);
-        intent.putExtra("userLogin", this.user.getLogin());
+        intent.putExtra("user", (Serializable) this.user);
         startActivity(intent);
     }
 
