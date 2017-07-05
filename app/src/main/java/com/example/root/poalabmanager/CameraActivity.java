@@ -83,7 +83,7 @@ public class CameraActivity extends AppCompatActivity {
             this.pictureSizeTextView.setText(String.format("Size : %s", getReadableFileSize(this.pictureFile.length())));*/
             try {
                 this.showProgressDialog("Enviando sua imagem...");
-                //this.compressImage(data);
+                this.compressImage(data);
                 this.saveImageLocally();
                 this.uploadImageToFirebase();
             } catch (IOException e) {
@@ -133,6 +133,7 @@ public class CameraActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
                 CameraActivity.this.showMessage("Ocorreu um erro durante o envio");
                 CameraActivity.this.progressDialog.hide();
+                CameraActivity.this.setResult(RESULT_OK, null);
                 CameraActivity.this.finish();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -140,6 +141,7 @@ public class CameraActivity extends AppCompatActivity {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 CameraActivity.this.showMessage("Imagem enviada com sucesso");
                 CameraActivity.this.progressDialog.hide();
+                CameraActivity.this.setResult(RESULT_OK, null);
                 CameraActivity.this.finish();
             }
         });
