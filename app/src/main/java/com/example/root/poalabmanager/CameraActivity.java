@@ -4,7 +4,10 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -18,7 +21,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import com.example.root.poalabmanager.utils.FileUtil;
@@ -76,7 +83,8 @@ public class CameraActivity extends AppCompatActivity {
             this.pictureSizeTextView.setText(String.format("Size : %s", getReadableFileSize(this.pictureFile.length())));*/
             try {
                 this.showProgressDialog("Enviando sua imagem...");
-                this.compressImage(data);
+                //this.compressImage(data);
+                this.saveImageLocally();
                 this.uploadImageToFirebase();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -90,6 +98,30 @@ public class CameraActivity extends AppCompatActivity {
         this.pictureFile = new Compressor(CameraActivity.this)
                 .setCompressFormat(Bitmap.CompressFormat.JPEG)
                 .compressToFile(this.pictureFile);
+    }
+
+    private void saveImageLocally() throws IOException {
+        InputStream is = null;
+        OutputStream os = null;
+        String destPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/PoaLabManager/"
+               + project.getName() + project.getId() + "/Images/";
+        File destPathFile = new File(destPath);
+        if(!destPathFile.exists()){
+            destPathFile.mkdirs();
+        }
+        try {
+            is = new FileInputStream(pictureFile.getAbsolutePath());
+            os = new FileOutputStream(destPath + pictureFile.getName());
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        }
+        finally {
+            is.close();
+            os.close();
+        }
     }
 
     private void uploadImageToFirebase(){

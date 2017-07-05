@@ -11,13 +11,16 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.GridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -26,9 +29,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.root.poalabmanager.models.Comments;
+import com.example.root.poalabmanager.models.ImageModel;
 import com.example.root.poalabmanager.models.Projects;
 import com.example.root.poalabmanager.models.Users;
 import com.example.root.poalabmanager.utils.SlugifyUtil;
+import com.example.root.poalabmanager.RecyclerGalleryItemClickListener;
+import com.example.root.poalabmanager.GalleryAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,6 +47,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class MenuActivity extends AppCompatActivity
 
@@ -52,6 +59,41 @@ public class MenuActivity extends AppCompatActivity
 
     private DatabaseReference dbRef;
     private DatabaseReference comentsRef;
+
+    GalleryAdapter mAdapter;
+    RecyclerView mRecyclerView;
+
+    ArrayList<ImageModel> data = new ArrayList<>();
+
+    public static String IMGS[] = {
+            "https://images.unsplash.com/photo-1444090542259-0af8fa96557e?q=80&fm=jpg&w=1080&fit=max&s=4b703b77b42e067f949d14581f35019b",
+            "https://images.unsplash.com/photo-1439546743462-802cabef8e97?dpr=2&fit=crop&fm=jpg&h=725&q=50&w=1300",
+            "https://images.unsplash.com/photo-1441155472722-d17942a2b76a?q=80&fm=jpg&w=1080&fit=max&s=80cb5dbcf01265bb81c5e8380e4f5cc1",
+            "https://images.unsplash.com/photo-1437651025703-2858c944e3eb?dpr=2&fit=crop&fm=jpg&h=725&q=50&w=1300",
+            "https://images.unsplash.com/photo-1431538510849-b719825bf08b?dpr=2&fit=crop&fm=jpg&h=725&q=50&w=1300",
+            "https://images.unsplash.com/photo-1434873740857-1bc5653afda8?dpr=2&fit=crop&fm=jpg&h=725&q=50&w=1300",
+            "https://images.unsplash.com/photo-1439396087961-98bc12c21176?dpr=2&fit=crop&fm=jpg&h=725&q=50&w=1300",
+            "https://images.unsplash.com/photo-1433616174899-f847df236857?dpr=2&fit=crop&fm=jpg&h=725&q=50&w=1300",
+            "https://images.unsplash.com/photo-1438480478735-3234e63615bb?dpr=2&fit=crop&fm=jpg&h=725&q=50&w=1300",
+            "https://images.unsplash.com/photo-1438027316524-6078d503224b?dpr=2&fit=crop&fm=jpg&h=725&q=50&w=1300"
+    };
+
+    private void loadProjectImages(){
+        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/PoaLabManager/"
+                + project.getName() + project.getId() + "/Images/";
+        File dir = new File(dirPath);
+        if(dir.isDirectory()){
+            File[] dirList = dir.listFiles();
+            if(dirList != null){
+                for (File child : dirList){
+                    ImageModel image = new ImageModel();
+                    image.setName(child.getName());
+                    image.setUrl(child.getAbsolutePath());
+                    data.add(image);
+                }
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +111,30 @@ public class MenuActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //images
+        loadProjectImages();
+        mRecyclerView = (RecyclerView) findViewById(R.id.list);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        mRecyclerView.setHasFixedSize(true);
+
+        mAdapter = new GalleryAdapter(MenuActivity.this, data);
+        mRecyclerView.setAdapter(mAdapter);
+
+        //código para abrir os detalhes da imagem
+        /*mRecyclerView.addOnItemTouchListener(new RecyclerGalleryItemClickListener(this,
+                new RecyclerGalleryItemClickListener.OnGalleryItemClickListener() {
+
+                    @Override
+                    public void onItemClick(View view, int position) {
+
+                        Intent intent = new Intent(MenuActivity.this, DetailActivity.class);
+                        intent.putParcelableArrayListExtra("data", data);
+                        intent.putExtra("pos", position);
+                        startActivity(intent);
+
+                    }
+                }));
+        */
         FloatingActionButton new_comment_fab = (FloatingActionButton) findViewById(R.id.new_comment_fab);
         new_comment_fab.setOnClickListener(new View.OnClickListener() {
             @Override
