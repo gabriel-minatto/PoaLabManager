@@ -63,7 +63,7 @@ public class MenuActivity extends AppCompatActivity
     GalleryAdapter mAdapter;
     RecyclerView mRecyclerView;
 
-    ArrayList<ImageModel> data = new ArrayList<>();
+    ArrayList<ImageModel> images = new ArrayList<>();
 
 
     public void loadProjectImages(){
@@ -77,7 +77,7 @@ public class MenuActivity extends AppCompatActivity
                     ImageModel image = new ImageModel();
                     image.setName(child.getName());
                     image.setUrl(child.getAbsolutePath());
-                    data.add(image);
+                    images.add(image);
                 }
             }
         }
@@ -105,7 +105,7 @@ public class MenuActivity extends AppCompatActivity
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         mRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new GalleryAdapter(MenuActivity.this, data);
+        mAdapter = new GalleryAdapter(MenuActivity.this, images);
         mRecyclerView.setAdapter(mAdapter);
 
         //código para abrir os detalhes da imagem
@@ -116,13 +116,13 @@ public class MenuActivity extends AppCompatActivity
                     public void onItemClick(View view, int position) {
 
                         Intent intent = new Intent(MenuActivity.this, DetailActivity.class);
-                        intent.putParcelableArrayListExtra("data", data);
+                        intent.putParcelableArrayListExtra("data", images);
                         intent.putExtra("pos", position);
                         startActivity(intent);
 
                     }
-                }));
-        */
+                }));*/
+
         FloatingActionButton new_comment_fab = (FloatingActionButton) findViewById(R.id.new_comment_fab);
         new_comment_fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,7 +227,7 @@ public class MenuActivity extends AppCompatActivity
             Intent camera = new Intent(this, CameraActivity.class);
             camera.putExtra("project",(Serializable) this.project);
             camera.putExtra("userLogin", this.user.getLogin());
-            startActivityForResult(camera,this.IMAGE_VIEW_ACTIVITY_REQUEST_CODE);
+            startActivity(camera);
 
         }
 
@@ -249,18 +249,9 @@ public class MenuActivity extends AppCompatActivity
     @Override
     public void onResume(){
         super.onResume();
-        this.data.clear();
+        this.images.clear();
         this.loadProjectImages();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
-        if (requestCode == this.IMAGE_VIEW_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK)
-        {
-            this.data.clear();
-            this.loadProjectImages();
-        }
+        this.mAdapter.notifyDataSetChanged();
     }
 
 }

@@ -133,7 +133,6 @@ public class CameraActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
                 CameraActivity.this.showMessage("Ocorreu um erro durante o envio");
                 CameraActivity.this.progressDialog.hide();
-                CameraActivity.this.setResult(RESULT_OK, null);
                 CameraActivity.this.finish();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -141,7 +140,6 @@ public class CameraActivity extends AppCompatActivity {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 CameraActivity.this.showMessage("Imagem enviada com sucesso");
                 CameraActivity.this.progressDialog.hide();
-                CameraActivity.this.setResult(RESULT_OK, null);
                 CameraActivity.this.finish();
             }
         });
